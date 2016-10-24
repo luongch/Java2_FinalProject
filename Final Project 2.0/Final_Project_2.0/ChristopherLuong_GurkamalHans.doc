@@ -1,0 +1,1725 @@
+/**
+ *
+ * Programmer: Christopher Luong, Gurkamal Hans<BR>
+ * Program: CharacterFileWriter.java<BR>
+ * Date: April 2016<BR>
+ * @version 2.0 
+ */
+
+package final_project_2.pkg0;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+
+
+public class CharacterFileWriter {
+    private File file;
+    CharacterFileWriter(String fileName) {
+        file = new File(fileName);
+    }
+    /**
+     * writes the file using the data that is stored in the character array list
+     * @param characterArray
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
+    public void writeCharacterFile(ArrayList<Characters> characterArray) throws FileNotFoundException, IOException{
+        //go through the arraylist
+        //get the data from the object
+        //put into string id,name,class,type,combo,hp,attack,rcv
+        //write the string to the file
+        String character = new String();
+        for (int sub = 0; sub < characterArray.size(); sub++) {
+            character += characterArray.get(sub).getId() + ",";
+            character += characterArray.get(sub).getName() + ",";
+            character += characterArray.get(sub).getcClass() + ",";
+            character += characterArray.get(sub).getType() + ",";
+            character += characterArray.get(sub).getCombo() + ",";
+            character += characterArray.get(sub).getHP() + ",";
+            character += characterArray.get(sub).getAttack() + ",";
+            character += characterArray.get(sub).getRCV();
+            character += "\n";
+        }
+        
+        FileWriter one = new FileWriter(file, false);
+        BufferedWriter buf = new BufferedWriter(one);
+        buf.write(character);
+        buf.close();
+        one.close();
+        
+    }
+}
+/**
+ *
+ * Programmer: Christopher Luong, Gurkamal Hans<BR>
+ * Program: CharacterReader.java<BR>
+ * Date: April 2016<BR>
+ * @version 2.0 
+ */
+
+package final_project_2.pkg0;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+public class CharacterReader {
+    private File file;
+    int uniqueID;
+    /**
+     * constructor that takes a file name
+     * @param fileName: file to be read
+     */
+    public CharacterReader(String fileName) {
+        file = new File(fileName);
+        
+    }
+
+    //read data from file and create objects as it reads
+    /**
+     * reads a file and generates characters object that is then put into array list
+     * @return an arraylist of characters
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
+    public ArrayList<Characters> getData() throws FileNotFoundException, IOException {
+        int id = 0;
+        String name = new String();
+        String cclass = new String();
+        String type = new String();
+        int combo = 0;
+        int hp = 0;
+        int attack = 0;
+        int rcv = 0;
+        
+        
+        ArrayList<Characters> characterArray = new ArrayList(); //create ArrayList
+        FileReader one = new FileReader(file); 
+        BufferedReader buf = new BufferedReader (one); 
+        String line = buf.readLine(); //send first line into a string
+        
+        while(line != null) { //while the line is not null
+            //chop up the string and put the stats into the correct variable holders
+            StringTokenizer tokenizer = new StringTokenizer(line, ",");
+            id = Integer.parseInt(tokenizer.nextToken());
+            uniqueID = id;
+            name = tokenizer.nextToken();
+            cclass = tokenizer.nextToken();
+            type = tokenizer.nextToken();
+            combo = Integer.parseInt(tokenizer.nextToken());
+            hp = Integer.parseInt(tokenizer.nextToken());
+            attack = Integer.parseInt(tokenizer.nextToken());
+            rcv = Integer.parseInt(tokenizer.nextToken());
+            
+            Characters uniqueID = new Characters(id,name,cclass,type,combo,hp,attack,rcv); //create the character object
+            characterArray.add(uniqueID); //send the character to the character ArrayList
+            line = buf.readLine(); //move to the next line so it will read the next character
+        }
+
+        
+        buf.close();
+        one.close();
+        return characterArray;
+    }
+    /**
+     * create an observable list that will be used to view all characters in list view
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
+    public ObservableList<String> fillObvList() throws FileNotFoundException, IOException{      
+        ObservableList<String> obvListFull = FXCollections.observableArrayList();
+        FileReader one = new FileReader(file); 
+        BufferedReader buf = new BufferedReader (one); 
+        String line = buf.readLine(); //send first line into a string
+        
+        while(line != null) { //while the line is not null
+            //chop up the string and put a string to be displayed
+            StringTokenizer tokenizer = new StringTokenizer(line, ",");
+            String character = new String();
+            character += tokenizer.nextToken() + ", ";
+            character += "Name: " + tokenizer.nextToken() + ", ";
+            character += "Class: " + tokenizer.nextToken() + ", ";
+            character += "Type: " + tokenizer.nextToken() + ", ";
+            character += "Combo: " + tokenizer.nextToken() + ", ";
+            character += "HP: " + tokenizer.nextToken() + ", ";
+            character += "ATK: " + tokenizer.nextToken() + ", ";
+            character += "RCV: " + tokenizer.nextToken();
+            character += "\n";
+
+            obvListFull.add(character); //send the character to the obv list
+            line = buf.readLine(); //move to the next line so it will read the next character
+        }
+
+        
+        buf.close();
+        one.close();
+        return obvListFull;
+    }
+    
+}
+/**
+ *
+ * Programmer: Christopher Luong, Gurkamal Hans<BR>
+ * Program: Characters.java<BR>
+ * Date: April 2016<BR>
+ * @version 2.0 
+ */
+
+package final_project_2.pkg0;
+
+public class Characters {
+    
+    int id;
+    String name;
+    String cclass;
+    String type;
+    int combo;
+    int hp;
+    int attack;
+    int rcv;
+    /**
+     * blank constructor, so you can get it one at a time
+     */
+    public Characters() {
+        
+    }
+    /**
+     * constructor that takes all information at once
+     * @param id
+     * @param name
+     * @param cclass
+     * @param type
+     * @param combo
+     * @param hp
+     * @param attack
+     * @param rcv 
+     */
+    public Characters(int id, String name, String cclass, String type, int combo, int hp,int attack, int rcv) {
+        this.id = id;
+        this.name = name;
+        this.cclass = cclass;
+        this.type = type;
+        this.combo = combo;
+        this.hp = hp;
+        this.attack = attack;
+        this.rcv = rcv;
+    }
+
+    public void setID(int id){
+        this.id =  id;
+    }
+    
+    public int getId() {
+        return this.id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+    public void setClass (String cclass) {
+        this.cclass = cclass;
+    }
+
+    public String getcClass () {
+        return this.cclass;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType(){
+        return this.type;
+    }
+
+    public void setCombo(int combo){
+        this.combo = combo;
+    }
+
+    public int getCombo() {
+        return this.combo;
+    }
+
+    public void setHP(int hp) {
+        this.hp = hp;
+    }
+    public int getHP() {
+        return this.hp;
+    }
+    public void setAttack(int attack) {
+        this.attack = attack;
+    }
+    public int getAttack() {
+        return this.attack;
+    }
+    public void setRCV(int rcv) {
+        this.rcv = rcv;
+    }
+    public int getRCV() {
+        return this.rcv;
+    }
+
+        
+}
+/**
+ *
+ * Programmer: Christopher Luong, Gurkamal Hans<BR>
+ * Program: CharacterSearch.java<BR>
+ * Date: April 2016<BR>
+ * @version 2.0 
+ */
+
+package final_project_2.pkg0;
+
+import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+
+
+
+public class CharacterSearch {
+    private ObservableList<String> obvList = FXCollections.observableArrayList();//used to hold strings for use in list view
+    private Button test = new Button();
+    /** 
+     * searching character list for ID searched
+     * @param tSearch is ID being searched
+     * @param characterArray
+     * @return obv list containing all matches(should only have 1 match)
+     * @throws Exception if empty or not a number
+     */
+    public ObservableList<String> searchID(TextField tSearch, ArrayList<Characters> characterArray) throws Exception{    
+        if(tSearch.getText() == null || tSearch.getText().isEmpty()) { //if empty
+            throw new Exception("You must input something into the search bar");
+        }
+        else {
+            if(isInt(tSearch.getText())) { //if it is an int
+                int searchNumValue = Integer.parseInt(tSearch.getText()); //set id searched
+                
+                for(int sub = 0; sub < characterArray.size(); sub++) { //loop through character array looking for id
+                    
+                    if(searchNumValue == characterArray.get(sub).getId() ) { //if it finds a matching id return true
+                        obvList.add(characterToString(characterArray,sub)); //add to the list
+                    }
+                }             
+            }
+            else { //if it is not a number
+                throw new Exception("Please input a number");
+            }   
+        }
+        return obvList; //return obv list so we can generate list view
+    }
+    /**
+     * search character list for names that match
+     * @param tSearch is the name being searched for
+     * @param characterArray 
+     * @return obv list containing all matches
+     * @throws Exception 
+     */
+    public ObservableList<String> searchName(TextField tSearch, ArrayList<Characters> characterArray) throws Exception {
+        System.out.println("name search");
+        if(tSearch.getText() == null || tSearch.getText().isEmpty()) { //if empty
+            throw new Exception("You must input something into the search bar");
+        }
+        else { //if not empty
+            String searchValue = tSearch.getText().toLowerCase(); //set the name searched   
+            for(int sub = 0; sub < characterArray.size(); sub++) { //loop through the character array looking for the name
+                
+                if(searchValue.matches(characterArray.get(sub).getName().toLowerCase()) ) { //if name matches
+                    obvList.add(characterToString(characterArray,sub)); //add to the obv list
+                     
+                }
+            }
+        }
+        return obvList; //return obv list so we can generate list view
+
+    }
+    /**
+     * checkings characters data with matching class
+     * @param tSearch value searched
+     * @param characterArray
+     * @return obv list containing all the matches
+     * @throws Exception if empty 
+     */
+    public ObservableList<String> searchClass(TextField tSearch, ArrayList<Characters> characterArray) throws Exception{
+        if(tSearch.getText() == null || tSearch.getText().isEmpty()) { //if empty
+            throw new Exception("You must input something into the search bar");
+        }
+        else {
+            String searchValue = tSearch.getText().toLowerCase(); //set the class searched
+            for(int sub = 0; sub < characterArray.size(); sub++) { //loop through the array looking for the class searched
+                if(searchValue.matches(characterArray.get(sub).getcClass().toLowerCase()) ) { //if a match is found
+                    obvList.add(characterToString(characterArray,sub)); //send the string to the obv list
+                }
+            }
+            
+        }
+        return obvList;//send back to generate list view
+    }
+    /**
+     * searching character array list for matching type values
+     * @param tSearch is type searched
+     * @param characterArray
+     * @return obv list containing all matching types
+     * @throws Exception 
+     */
+    public ObservableList<String> searchType(TextField tSearch, ArrayList<Characters> characterArray) throws Exception {
+        if(tSearch.getText() == null || tSearch.getText().isEmpty()) { //if empty
+            throw new Exception("You must input something into the search bar");
+        }
+        else {
+            String searchValue = tSearch.getText().toLowerCase(); //set the type searched
+            for(int sub = 0; sub < characterArray.size(); sub++) { //loop through characer array for type searched
+                if(searchValue.matches(characterArray.get(sub).getType().toLowerCase()) ) { //if found
+                    obvList.add(characterToString(characterArray,sub)); //add to obv list
+                }
+            }
+        }
+        return obvList;
+    }
+    /**
+     * searching character array list for combo values searched
+     * @param tSearch is the value searched
+     * @param characterArray
+     * @return obv list containing all matches found
+     * @throws Exception : if empty or not a number
+     */
+    public ObservableList<String> searchCombo(TextField tSearch, ArrayList<Characters> characterArray) throws Exception {
+        
+        if(tSearch.getText() == null || tSearch.getText().isEmpty()) { //if empty
+            throw new Exception("You must input something into the search bar");
+        }
+        else {
+            if(isInt(tSearch.getText())) { //if it is an int
+                int searchNumValue = Integer.parseInt(tSearch.getText()); //set combo searched
+                for(int sub = 0; sub < characterArray.size(); sub++) { //loop through character array looking for combos
+                    
+                    if(searchNumValue == characterArray.get(sub).getCombo() ) { //if it finds a matching combo return true
+                        obvList.add(characterToString(characterArray,sub)); //send to obv list
+                    }
+                }             
+            }
+            else { //if it is not a number
+                throw new Exception("Please input a number");
+            }   
+        }
+        return obvList; //return obv list to be used to generate list view
+    }
+    /**
+     * checking character array for matched HP searches
+     * @param tSearch: value searched
+     * @param characterArray
+     * @return: returns obv list containing all matches
+     * @throws Exception: empty or not a number
+     */
+    public ObservableList<String> searchHP(TextField tSearch, ArrayList<Characters> characterArray) throws Exception{
+        if(tSearch.getText() == null || tSearch.getText().isEmpty()) { //if empty
+            throw new Exception("You must input something into the search bar");
+        }
+        else {
+            if(isInt(tSearch.getText())) { //if it is an int
+                int searchNumValue = Integer.parseInt(tSearch.getText()); //set HP searched
+                for(int sub = 0; sub < characterArray.size(); sub++) { //loop through character array looking for HP
+                    
+                    if(searchNumValue == characterArray.get(sub).getHP() ) { //if it finds a matching HP return true
+                        obvList.add(characterToString(characterArray,sub)); //send to obv list
+                    }
+                }             
+            }
+            else { //if it is not a number
+                throw new Exception("Please input a number");
+            }   
+        }
+        return obvList; //return obv list for later use
+    }
+    /**
+     * searching character array list for matching searched ATK value
+     * @param tSearch: value searched
+     * @param characterArray 
+     * @return: obv list containing matches
+     * @throws Exception : empty or not a number
+     */
+    public ObservableList<String> searchATK(TextField tSearch, ArrayList<Characters> characterArray) throws Exception{
+        if(tSearch.getText() == null || tSearch.getText().isEmpty()) { //if empty
+            throw new Exception("You must input something into the search bar");
+        }
+        else {
+            if(isInt(tSearch.getText())) { //if it is an int
+                int searchNumValue = Integer.parseInt(tSearch.getText()); //set ATK searched
+                for(int sub = 0; sub < characterArray.size(); sub++) { //loop through character array looking for ATK
+                    
+                    if(searchNumValue == characterArray.get(sub).getAttack() ) { //if it finds a matching ATK return true
+                        obvList.add(characterToString(characterArray,sub)); //send to obv list
+                    }
+                }             
+            }
+            else { //if it is not a number
+                throw new Exception("Please input a number");
+            }   
+        }
+        return obvList; //return obv list for use in list view
+    }
+    /**
+     * searching RCV searched in RCV stored for matches
+     * @param tSearch
+     * @param characterArray
+     * @return an obv list which is later used to generate list view
+     * @throws Exception: no input or if not a number
+     */
+    public ObservableList<String> searchRCV(TextField tSearch, ArrayList<Characters> characterArray) throws Exception{
+        if(tSearch.getText() == null || tSearch.getText().isEmpty()) { //if empty
+            throw new Exception("You must input something into the search bar");
+        }
+        else {
+            if(isInt(tSearch.getText())) { //if it is an int
+                int searchNumValue = Integer.parseInt(tSearch.getText()); //set RCV searched
+                for(int sub = 0; sub < characterArray.size(); sub++) { //loop through character array looking for ATK
+                    
+                    if(searchNumValue == characterArray.get(sub).getRCV() ) { //if it finds a matching ATK return true
+                    obvList.add(characterToString(characterArray,sub)); //add string to obv list
+                    
+                    }
+                }             
+            }
+            else { //if it is not a number
+                throw new Exception("Please input a number");
+            }   
+        }
+        return obvList;
+    }
+    /**
+     * checking if string is an int
+     * @param s, string we are checking
+     * @return true or false
+     */
+    private boolean isInt(String s){ //checks if the string is an integer
+        for(int i = 0; i < s.length(); i++){
+            if(!Character.isDigit(s.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * converts the character at a certain index to a string
+     * @param characterArray is where the data is coming from
+     * @param sub, the index at which we get the data from
+     * @return a string for use in obv list
+     */
+    private String characterToString(ArrayList<Characters> characterArray, int sub) {
+        String character = new String();
+        character += characterArray.get(sub).getId() + ", ";
+        character += "Name: " + characterArray.get(sub).getName() + ", ";
+        character += "Class: " + characterArray.get(sub).getcClass() + ", ";
+        character += "Type: " + characterArray.get(sub).getType() + ", ";
+        character += "Combo: " + characterArray.get(sub).getCombo() + ", ";
+        character += "HP: " + characterArray.get(sub).getHP() + ", ";
+        character += "ATK: " + characterArray.get(sub).getAttack() + ", ";
+        character += "RCV: " + characterArray.get(sub).getRCV();
+        character += "\n";
+        return character;
+    }
+}
+/**
+ *
+ * Programmer: Christopher Luong, Gurkamal Hans<BR>
+ * Program: CharacterWriter.java<BR>
+ * Date: April 2016<BR>
+ * @version 2.0 
+ */
+
+package final_project_2.pkg0;
+
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+
+
+
+public class CharacterWriter {
+    /**
+     * constructor
+     * 
+     */
+    public CharacterWriter() {
+        
+    }
+    /**
+     * add character to the array list by reading the textfields and drop down and then creating a character which is then added to the character array list
+     * @param textFieldArrayList
+     * @param characterArray
+     * @param classDD
+     * @param typeDD 
+     */
+    public void addCharacter(ArrayList<TextField> textFieldArrayList, ArrayList<Characters> characterArray, ComboBox<String> classDD, ComboBox<String> typeDD){        
+        String newCharacter = new String(); //store stats to be used to make an object
+        
+        for (int sub = 0; sub < textFieldArrayList.size(); sub++) {
+            if(sub == 1) { //if it is getting the name then we also need to get the drop down options before the other stats
+                newCharacter += textFieldArrayList.get(sub).getText() + ",";
+                newCharacter += classDD.getValue() + ",";
+                newCharacter += typeDD.getValue() + ",";
+            }
+            else { //otherwise do this normally
+                newCharacter += textFieldArrayList.get(sub).getText() + ",";
+            }
+            
+        }
+        Characters newCharacterObject = new Characters(); //create holder for a character
+        newCharacterObject = characterCreater(newCharacter); //create a new character and put it into the holder
+        
+        
+        characterArray.add(newCharacterObject); //add the character to the character array list
+        
+    }
+    /**
+     * remove the character
+     * @param characterArray
+     * @param index
+     * @throws Exception if empty
+     */
+    public void removeCharacter(ArrayList<Characters> characterArray,int index) throws Exception {
+        if(characterArray.isEmpty()) {
+            throw new Exception("character array list is empty");
+        }
+        else {
+            characterArray.remove(index);
+        }
+        
+    }
+    /**
+     * change the data on the character at the current index
+     * @param textFieldArrayList
+     * @param characterArray
+     * @param index
+     * @param classDD
+     * @param typeDD 
+     */
+    public void modifyCharacterV2(ArrayList<TextField> textFieldArrayList, ArrayList<Characters> characterArray, int index,ComboBox<String> classDD, ComboBox<String> typeDD) {
+        characterArray.get(index).setID(Integer.parseInt(textFieldArrayList.get(0).getText()));
+        characterArray.get(index).setName(textFieldArrayList.get(1).getText());
+        characterArray.get(index).setClass(classDD.getValue());
+        characterArray.get(index).setType(typeDD.getValue());
+        characterArray.get(index).setCombo(Integer.parseInt(textFieldArrayList.get(2).getText()));
+        characterArray.get(index).setHP(Integer.parseInt(textFieldArrayList.get(3).getText()));
+        characterArray.get(index).setAttack(Integer.parseInt(textFieldArrayList.get(4).getText()));
+        characterArray.get(index).setRCV(Integer.parseInt(textFieldArrayList.get(5).getText()));  
+    }
+    /**
+     * reads a string an creates an object
+     * @param newCharacter
+     * @return a character object
+     */
+    private Characters characterCreater(String newCharacter) {
+        //make new object: id,name,class,type,combo,hp,attack,rcv
+        StringTokenizer tokenizer = new StringTokenizer(newCharacter, ",");
+        Characters newCharacterObject = new Characters();
+        newCharacterObject.setID(Integer.parseInt(tokenizer.nextToken()));
+        newCharacterObject.setName(tokenizer.nextToken());
+        newCharacterObject.setClass(tokenizer.nextToken());
+        newCharacterObject.setType(tokenizer.nextToken());
+        newCharacterObject.setCombo(Integer.parseInt(tokenizer.nextToken()));
+        newCharacterObject.setHP(Integer.parseInt(tokenizer.nextToken()));
+        newCharacterObject.setAttack(Integer.parseInt(tokenizer.nextToken()));
+        newCharacterObject.setRCV(Integer.parseInt(tokenizer.nextToken()));
+        return newCharacterObject;
+    }
+}
+/**
+ *
+ * Programmer: Christopher Luong, Gurkamal Hans<BR>
+ * Program: Main.java<BR>
+ * Date: April 2016<BR>
+ * @version 2.0 
+ */
+
+package final_project_2.pkg0;
+
+import java.io.FileNotFoundException;
+import javafx.scene.image.Image;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    private Label lblID = new Label("ID");
+    private Label lblName = new Label("Name");
+    private Label lblClass = new Label("Class");
+    private Label lblType = new Label("Type");
+    private Label lblCombo = new Label("Combo");
+    private Label lblHP = new Label ("HP");
+    private Label lblATK = new Label("ATK");
+    private Label lblRCV = new Label("RCV");
+    private Label iderror = new Label("");
+    private Label nameerror = new Label("");
+    private Label cclasserror = new Label("");
+    private Label typeerror = new Label("");
+    private Label comboerror = new Label("");
+    private Label hperror = new Label ("");
+    private Label atkerror = new Label("");
+    private Label rcverror = new Label("");
+
+    private TextField txtID = new TextField();
+    private TextField txtName = new TextField();
+    //private TextField tClass = new TextField();
+    // TextField tType = new TextField();
+    private TextField txtCombo = new TextField();
+    private TextField txtHP = new TextField();
+    private TextField txtATK = new TextField();
+    private TextField txtRCV = new TextField();
+    private TextField txtSearch = new TextField();
+    
+    private Button btnFirst = new Button("<< First");
+    private Button btnLast = new Button("Last >>");
+    private Button btnNext = new Button("Next >");
+    private Button btnPrev = new Button("< Previous");
+    private Button btnEdit = new Button("Edit Mode");
+    private Button btnAdd = new Button("Add");
+    private Button btnRemove = new Button("Remove");
+    private Button btnModify = new Button("Modify");
+    private Button btnSearch = new Button("Search");
+    private Button btnListView = new Button("List View");
+    
+    private MediaPlayer mPlayer;
+    
+    private ObservableList<String> obvList = FXCollections.observableArrayList();
+    private ObservableList<String> obvFullList = FXCollections.observableArrayList();
+    
+    private ArrayList<Image> imgList = new ArrayList();
+    private ImageView imageView = new ImageView();
+   
+    private ComboBox<String> searchDD = new ComboBox();
+    private ComboBox<String> classDD = new ComboBox();
+    private ComboBox<String> typeDD = new ComboBox();
+    
+    private ArrayList<TextField> textFieldArrayList = new ArrayList<TextField>();
+    private ArrayList<Label> errorLabelArrayList = new ArrayList<Label>();
+    
+    private ArrayList<Characters> characterArray = new ArrayList();
+    private CharacterFileWriter characterFileWriter = new CharacterFileWriter("characters.dat");
+    private CharacterWriter characterWriter = new CharacterWriter();
+    private CharacterReader characterReader = new CharacterReader("characters.dat");
+    private Validations validations = new Validations();
+    private CharacterSearch characterSearch = new CharacterSearch();
+    
+    private int index = 0;
+    
+    @Override
+    public void start(Stage primaryStage) {
+        
+        /**
+         * attach song to media player
+         */
+        URL urlPath = Main.class.getResource("/One Piece OST - The Very Very Very Strongest [extended].mp3");
+        Media media = new Media(urlPath.toString());
+        mPlayer = new MediaPlayer(media);
+        mPlayer.play();
+        
+        /**
+         * creating images
+         */
+        Image whitebeardIMG = new Image("Whitebeard.png");
+        Image rayleighIMG = new Image("Dark King Rayleigh.png");
+        Image boaIMG = new Image("Boa Hancock Warlord of the Sea.png");
+        Image sengokuIMG = new Image("Sengoku the Buddha.png");
+        Image shanksIMG = new Image("Shanks Black Clad Emperor.png");
+        Image aceIMG = new Image("Portgas D. Ace Black Clad Whitebeard 2nd Div. Commander.png");
+        Image luffyIMG = new Image("Monkey D. Luffy Voyage Dream.png");
+        Image marcoIMG = new Image("Marco the Phoenix Whitebeard 1st Div. Commander.png");
+        Image saboIMG = new Image("Sabo the Revolutionary.png");
+        Image mihawkIMG = new Image("Dracule Mihawk World's Strongest Swordsman.png");
+        Image crocodileIMG = new Image("Sir Crocodile Logia Former Warlord of the Sea.png");
+        Image lucciIMG = new Image("Rob Lucci CP9's Strongest Generation.png");
+        Image doffyIMG = new Image("Heavenly Yaksha Donquixote Doflamingo.png");
+        Image jimbeIMG = new Image("Knight of the Sea Jinbe Warlord of the Sea.png");
+        Image naIMG = new Image("naIMG.jpg");
+
+        searchDD.setPromptText("What would you like to search?"); //set default search dropdown message
+        searchDD.getItems().addAll("ID","Name","Class","Type","Combo","HP", "ATK", "RCV"); //add selection to drop down
+        searchDD.setMinWidth(250);
+        txtSearch.setMinWidth(150);
+        btnSearch.setMinWidth(75);
+        
+        classDD.getItems().addAll("Striker", "Fighter", "Shooter", "Slasher"); //add class selection to dropdown
+        typeDD.getItems().addAll("DEX","STR","QCK","INT","PSY"); //add type selection to dropdown
+        
+        /**
+         * filling textfield array list
+         */
+        textFieldArrayList.add(txtID);
+        textFieldArrayList.add(txtName);
+        //textFieldArrayList.add(tClass);
+        //textFieldArrayList.add(tType);
+        textFieldArrayList.add(txtCombo);
+        textFieldArrayList.add(txtHP);
+        textFieldArrayList.add(txtATK);
+        textFieldArrayList.add(txtRCV);
+        
+        /**
+         * filling error label textfield array list
+         */
+        errorLabelArrayList.add(iderror);
+        errorLabelArrayList.add(nameerror);
+        errorLabelArrayList.add(cclasserror);
+        errorLabelArrayList.add(typeerror);
+        errorLabelArrayList.add(comboerror);
+        errorLabelArrayList.add(hperror);
+        errorLabelArrayList.add(atkerror);
+        errorLabelArrayList.add(rcverror);
+        
+        /**
+         * filling image array list
+         */
+        imgList.add(whitebeardIMG);
+        imgList.add(rayleighIMG);
+        imgList.add(boaIMG);
+        imgList.add(sengokuIMG);
+        imgList.add(shanksIMG);
+        imgList.add(aceIMG);
+        imgList.add(luffyIMG);
+        imgList.add(marcoIMG);
+        imgList.add(saboIMG);
+        imgList.add(mihawkIMG);
+        imgList.add(crocodileIMG);
+        imgList.add(lucciIMG);
+        imgList.add(doffyIMG);
+        imgList.add(jimbeIMG);
+        imgList.add(naIMG);
+        
+
+        disableEdit(); //method to disable editing at the start
+
+        VBox idbox = new VBox();
+        VBox namebox = new VBox();
+        VBox classbox = new VBox();
+        VBox typebox = new VBox();
+        VBox combobox = new VBox();
+        VBox hpbox = new VBox();
+        VBox atkbox = new VBox();
+        VBox rcvbox = new VBox();
+        HBox buttons = new HBox();
+        VBox search = new VBox();
+        search.setSpacing(10);
+        idbox.getChildren().addAll(lblID, iderror,txtID);
+        namebox.getChildren().addAll(lblName, nameerror,txtName);
+        //classbox.getChildren().addAll(cclass, cclasserror,tClass,classDD);
+        classbox.getChildren().addAll(lblClass, cclasserror,classDD);
+        //typebox.getChildren().addAll(type, typeerror,tType,typeDD);
+        typebox.getChildren().addAll(lblType, typeerror,typeDD);
+        combobox.getChildren().addAll(lblCombo, comboerror,txtCombo);
+        hpbox.getChildren().addAll(lblHP, hperror,txtHP);
+        atkbox.getChildren().addAll(lblATK, atkerror,txtATK);
+        rcvbox.getChildren().addAll(lblRCV, rcverror,txtRCV);
+        buttons.getChildren().addAll(btnFirst, btnLast, btnNext, btnPrev);
+        search.getChildren().addAll(searchDD,txtSearch,btnSearch);
+
+        try {
+            obvFullList = characterReader.fillObvList();
+            characterArray = characterReader.getData(); //filling character array list
+            characterFileWriter.writeCharacterFile(characterArray); //writing the file using data from the character array list
+            setData(0); //displaying the first character 
+        }
+        catch(FileNotFoundException e) {
+            System.err.println(e.getMessage());
+            showStage(e.getMessage());
+        }
+        catch(IOException e) {
+            System.err.println(e.getMessage());
+            showStage(e.getMessage());
+        }
+        catch(Exception exception) {
+            System.err.println(exception.getMessage());
+            showStage(exception.getMessage());
+        }
+        /**
+         * when first button is pressed, brings you to first index
+         */
+        btnFirst.setOnAction((e)->{
+            try {
+                if(!validations.checkEmpty(characterArray,textFieldArrayList)) { //if not empty
+                    index = 0; //set the index to 0
+                    setData(index); //show the data from the first index
+                }
+            }
+            catch(Exception exception) { //otherwise it will let user know that the arraylist is empty
+                showStage(exception.getMessage());
+            }
+        });
+        /**
+         * when last btn is pressed then it will go to last indez
+         */
+        btnLast.setOnAction((e)->{
+            try {
+                if(!validations.checkEmpty(characterArray,textFieldArrayList)) { //if not empty
+                    index = characterArray.size()-1; //set the index to the size of the array list -1
+                    setData(index); //show the data from the last index of characterArray
+                }
+
+            }
+            catch(Exception exception) { //otherwise it will let user know that the arraylist is empty
+                showStage(exception.getMessage());
+            }
+
+
+        });
+        /**
+         * when next btn is pressed it will go to next index
+         */
+        btnNext.setOnAction((e)->{
+            try {
+                if(!validations.checkEmpty(characterArray,textFieldArrayList)) {
+                    if(index < characterArray.size()-1) { //if it is not bigger than the ArrayList size then increase index
+                        index++;
+
+                    }
+                    System.out.println("from next: " + index);
+                    setData(index); //show the data in respect to the current index
+                }
+
+            }
+            catch(Exception exception) {
+                showStage(exception.getMessage());
+            }
+
+        });
+        /**
+         * when prev is pressed it will go to previous index
+         */
+        btnPrev.setOnAction((e)->{
+            try {
+                if(!validations.checkEmpty(characterArray,textFieldArrayList)) { //if not empty then it will work
+                    if(index > 0) { //if the index is not the first then decrease index otherwise do nothing
+                        index--;
+                    }
+                    setData(index); //show the data in respect to current index
+                    System.out.println("from prev: " + index);
+                }
+            }
+            catch(Exception exception) {
+                showStage(exception.getMessage());
+            }
+        });
+        /**
+         * when edit is pressed enable the add,remove, and modify button
+         */
+        btnEdit.setOnAction((e)->{
+            enableEdit();
+        });
+        /**
+         * adds a character to the character array and goes to the newly created character
+         */
+        btnAdd.setOnAction((e)->{
+            try {
+                System.out.println(classDD.getValue());
+                if(validations.validateAdd(textFieldArrayList, characterArray, errorLabelArrayList,index)) { // if validations pass
+                    characterWriter.addCharacter(textFieldArrayList, characterArray, classDD, typeDD); //add the character
+                    showStage("Character has been added"); //prompt that lets user know character has been added
+                    disableEdit(); //disable editing
+                    
+                    for(int i=0; i<errorLabelArrayList.size();i++) { //remove error messages
+                        errorLabelArrayList.get(i).setText("");
+                    }
+                    index = characterArray.size()-1; //this is to set the index to the last position since user will be sent to the most recent
+                    
+                    characterFileWriter.writeCharacterFile(characterArray); //rewrite the characters.dat file
+                }
+
+            }
+            catch(FileNotFoundException x) {
+                System.err.println(x.getMessage());
+                showStage(x.getMessage());
+            }
+            catch(IOException x) {
+                System.err.println(x.getMessage());
+                showStage(x.getMessage());
+            }
+            catch (Exception exception) {
+                showStage(exception.getMessage());
+            }
+        });
+        /**
+         * when remove button is press validate and then remove character
+         */
+        btnRemove.setOnAction((e)->{
+            try {
+                
+                if(validations.validateRemove(textFieldArrayList, characterArray,index, errorLabelArrayList,classDD,typeDD)){ //if all validations go thorugh
+                    
+                    characterWriter.removeCharacter(characterArray, index); //remove character
+                    if(validations.checkEmpty(characterArray,textFieldArrayList)) { 
+                        //if it is empty an exception is thrown and sets textfields to null
+                    }
+                }
+
+                if(index > 0) {
+                    index--; //remove one of index since it no longer exists
+                }
+
+                setData(index); //show the data for the current index
+                showStage("Character has been removed"); //prompt to let user know the character has been remove
+                disableEdit(); //disable editing
+                characterFileWriter.writeCharacterFile(characterArray); //rewrite the characters.dat file
+            }
+            
+            catch(FileNotFoundException x) {
+                System.err.println(x.getMessage());
+                showStage(x.getMessage());
+            }
+            catch(IOException x) {
+                System.err.println(x.getMessage());
+                showStage(x.getMessage());
+            }
+            catch(Exception exception){
+                showStage(exception.getMessage());
+            }
+        });
+        /**
+         * when modify is pressed validate and then change the data based on the current index and textfield
+         */
+        btnModify.setOnAction((e)->{
+            try {
+                if(validations.validateModify(textFieldArrayList, characterArray, errorLabelArrayList, index)) { //if validations pass
+                    characterWriter.modifyCharacterV2(textFieldArrayList, characterArray, index, classDD, typeDD); //change the data 
+                    setData(index); //go to current index
+                    showStage("Character has been modified"); //prompt user to let them know it has been modifed
+                    disableEdit(); //disable editing
+                    characterFileWriter.writeCharacterFile(characterArray); //rewrite the characters.dat file
+                    for(int i=0; i<errorLabelArrayList.size();i++) { //remove error messages
+                        errorLabelArrayList.get(i).setText("");
+                    }
+                }
+            }
+            catch(FileNotFoundException x) {
+                System.err.println(x.getMessage());
+                showStage(x.getMessage());
+            }
+            catch(IOException x) {
+                System.err.println(x.getMessage());
+                showStage(x.getMessage());
+            }
+            catch (Exception exception) {
+                System.err.println(exception.getMessage());
+                showStage(exception.getMessage());
+            } 
+        });
+        /**
+         * when search button is pressed
+         */
+        btnSearch.setOnAction((e)->{
+            try {
+                
+                if(searchDD.getValue() == "ID") { //id search
+                    obvList = characterSearch.searchID(txtSearch, characterArray); //set obv list
+                    checkObvList(obvList);
+                }
+                else if(searchDD.getValue() == "Name") { //name search
+                    obvList = characterSearch.searchName(txtSearch, characterArray);
+                    checkObvList(obvList);
+                             
+                }
+                else if(searchDD.getValue() == "Class") { //class search
+                    obvList = characterSearch.searchClass(txtSearch, characterArray);
+                    checkObvList(obvList);
+
+                }
+                else if(searchDD.getValue() == "Type") { //type search
+                    obvList = characterSearch.searchType(txtSearch, characterArray);
+                    checkObvList(obvList);
+                }
+                else if(searchDD.getValue() == "Combo") { //combo search
+                    obvList = characterSearch.searchCombo(txtSearch, characterArray);
+                    checkObvList(obvList);
+                }
+                else if(searchDD.getValue() == "HP") { //hp search
+                    obvList = characterSearch.searchHP(txtSearch, characterArray);
+                    checkObvList(obvList);
+                }
+                else if(searchDD.getValue() == "ATK") { //atk search
+                    obvList = characterSearch.searchATK(txtSearch, characterArray);
+                    checkObvList(obvList);
+                }
+                else if(searchDD.getValue() == "RCV") { //rcv search
+                    obvList = characterSearch.searchRCV(txtSearch, characterArray);
+                    checkObvList(obvList);
+                }
+                else {
+                    showStage("Please select from drop down!");
+                }
+            }
+            catch(Exception exception) {
+                showStage(exception.getMessage());
+            }
+            
+        });
+        /**
+         * displays the full list of characters when pressed
+         */
+        btnListView.setOnAction((e)->{
+            try {
+                obvFullList = characterReader.fillObvList(); //refreshes the list
+                fullListStage();
+            }
+            catch(FileNotFoundException x) {
+                System.out.println(x.getMessage());
+            }
+            catch(IOException x) {
+                System.out.println(x.getMessage());
+            }
+            catch(Exception exception) {
+                System.out.println(exception.getMessage());
+            }
+            
+        });
+        
+        GridPane pane = new GridPane();
+        pane.add(idbox, 0, 0);
+        pane.add(btnListView,1,0);
+        pane.add(namebox, 0,1,4,1);
+        pane.add(classbox,0,2);
+        pane.add(typebox, 1, 2);
+        pane.add(combobox, 0, 3);
+        pane.add(hpbox, 1, 3);
+        pane.add(atkbox, 2, 3);
+        pane.add(rcvbox, 3, 3);
+        pane.add(btnFirst, 0, 4);
+        pane.add(btnPrev, 1 ,4);
+        pane.add(btnNext, 2, 4);
+        pane.add(btnLast, 3, 4);
+        pane.add(btnEdit, 0, 5);
+        pane.add(btnAdd, 1, 5);
+        pane.add(btnRemove,2,5);
+        pane.add(btnModify, 3, 5);
+        pane.add(search, 0, 6, 4, 1);
+        pane.add(imageView,5, 0, 1, 6);
+        //pane.add(tSearch, 1, 6);
+        //pane.add(btnSearch, 2, 6);
+        //pane.add(search, 0, 5);
+        pane.setHgap(10); //horizontal gap in pixels => that's what you are asking for
+        pane.setVgap(10);
+        pane.setPadding(new Insets(10, 10, 10, 10));
+        Scene scene = new Scene(pane);
+        //primaryStage.setFullScreen(true);
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    /**
+     * method to display the data of the current index
+     * @param index 
+     */
+    private void setData(int index){
+        txtID.setText(Integer.toString(characterArray.get(index).getId()));
+        txtName.setText(characterArray.get(index).getName());
+
+        txtCombo.setText(Integer.toString(characterArray.get(index).getCombo()));
+        txtHP.setText(Integer.toString(characterArray.get(index).getHP()));
+        txtATK.setText(Integer.toString(characterArray.get(index).getAttack()));
+        txtRCV.setText(Integer.toString(characterArray.get(index).getRCV()));
+        
+        classDD.setValue(characterArray.get(index).getcClass());
+        typeDD.setValue(characterArray.get(index).getType());
+        //set picture if the exact name matches
+        switch(characterArray.get(index).getName()) {
+            case("Whitebeard"):
+                imageView.setImage(imgList.get(0));
+                break;
+            case("Dark King Rayleigh"):
+                imageView.setImage(imgList.get(1));
+                break;
+            case("Boa Hancock Warlord of the Sea"):
+                imageView.setImage(imgList.get(2));
+                break;
+            case("Sengoku the Buddha"):
+                imageView.setImage(imgList.get(3));
+                break;
+            case("Shanks Black Clad Emperor"):
+                imageView.setImage(imgList.get(4));
+                break;
+            case("Portgas D. Ace Black Clad Whitebeard 2nd Div. Commander"):
+                imageView.setImage(imgList.get(5));
+                break;
+            case("Monkey D. Luffy Voyage Dream"):
+                imageView.setImage(imgList.get(6));
+                break;
+            case("Marco the Phoenix Whitebeard 1st Div. Commander"):
+                imageView.setImage(imgList.get(7));
+                break;
+            case("Sabo the Revolutionary"):
+                imageView.setImage(imgList.get(8));
+                break;
+            case("Dracule Mihawk World's Strongest Swordsman"):
+                imageView.setImage(imgList.get(9));
+                break;
+            case("Sir Crocodile Logia Former Warlord of the Sea"):
+                imageView.setImage(imgList.get(10));
+                break;
+            case("Rob Lucci CP9's Strongest Generation"):
+                imageView.setImage(imgList.get(11));
+                break;
+            case("Heavenly Yaksha Donquixote Doflamingo"):
+                imageView.setImage(imgList.get(12));
+                break;
+            case("Knight of the Sea Jimbe Warlord of the Sea"):    
+                imageView.setImage(imgList.get(13));
+                break;
+            default:
+                imageView.setImage(imgList.get(14));
+                break;
+        }
+    }
+    /**
+     * enable the editing
+     */
+    private void enableEdit() {
+        //set all textfield to editable until they press the edit mode
+        for(int sub = 0; sub < textFieldArrayList.size(); sub++) {
+            textFieldArrayList.get(sub).setEditable(true);
+        }
+        //classDD.setDisable(false); //cant use because it becomes hard to read when disabled
+        //typeDD.setDisable(false);
+        btnAdd.setDisable(false);
+        btnRemove.setDisable(false);
+        btnModify.setDisable(false);
+        btnEdit.setDisable(true);
+        
+
+    }
+    /**
+     * disables the editing
+     */
+    private void disableEdit() {
+        //set all textfield to uneditable until they press the edit mode
+        for(int sub = 0; sub < textFieldArrayList.size(); sub++) {
+            textFieldArrayList.get(sub).setEditable(false);
+        }
+        //classDD.setDisable(true); //cant use because it becomes hard to read
+        //typeDD.setDisable(true);
+        btnAdd.setDisable(true);
+        btnRemove.setDisable(true);
+        btnModify.setDisable(true);
+        btnEdit.setDisable(false);
+    }
+    /**
+     * displays a message to the user
+     * @param message 
+     */
+    private void showStage(String message) {
+        Stage stage = new Stage();
+        Button bOK = new Button("OK");
+        bOK.setOnAction((e)->{
+            for(int sub = 0; sub < errorLabelArrayList.size(); sub++) { //when ok is pressed all error messages get erased
+                errorLabelArrayList.get(sub).setText("");
+            }
+            stage.close();
+        });
+
+        BorderPane pane = new BorderPane();
+        pane.setCenter(new Label(message));
+        pane.setBottom(bOK);
+
+        Scene scene = new Scene(pane);
+        stage.setScene(scene);
+        stage.setTitle(message);
+        stage.show();
+
+    }
+    /**
+     * displays all the characters in the file and lets you go to that index when you click on it
+     */
+    private void fullListStage(){
+        Stage stage = new Stage();
+
+        ListView<String> listview = new ListView();
+        listview.setItems(obvFullList); //put the content in observable list into the list view
+        
+        listview.setOnMouseClicked((e)->{
+            
+            String current = listview.getSelectionModel().getSelectedItem(); //get the string of the clicked list value
+            System.out.println(current);
+            if(current == null || current.isEmpty()) {
+                System.err.println("Can't click there");
+            }
+            else {
+                
+                StringTokenizer tokenizer = new StringTokenizer(current, ",");
+                int characterID = Integer.parseInt(tokenizer.nextToken()); //get the first token which is id
+                for(int sub = 0; sub < characterArray.size(); sub++) { //loop through character array
+                    if(characterID == characterArray.get(sub).getId()) { //if it finds a matching id
+                        index = sub; //set the index to the index where the character that holds the ID is located
+                }
+            }
+            setData(index); //display the data
+            stage.close(); //close the screen after they click on one
+            }
+            
+        });
+        
+        BorderPane pane = new BorderPane();
+        pane.setCenter(listview);
+        
+        Scene scene = new Scene(pane, 500, 500);
+        stage.setScene(scene);
+        stage.setTitle("Search results");
+        stage.show();
+    }
+    /**
+     * displays a new stage that uses list view which displays information in the observable list
+     */
+    private void searchStage() {
+        Stage stage = new Stage();
+        Button bOK = new Button("OK");
+        
+        btnSearch.setDisable(true); //disable search button
+        ListView<String> listview = new ListView();
+        listview.setItems(obvList); //put the content in observable list into the list view
+        
+        listview.setOnMouseClicked((e)->{
+            String current = listview.getSelectionModel().getSelectedItem();
+            if(current == null || current.isEmpty()) {
+                System.err.println("Can't click there");
+            }
+            else {
+                StringTokenizer tokenizer = new StringTokenizer(current, ",");
+                int characterID = Integer.parseInt(tokenizer.nextToken());
+                for(int sub = 0; sub < characterArray.size(); sub++) {
+                    if(characterID == characterArray.get(sub).getId()) {
+                        index = sub;
+                    }
+                }
+            setData(index);
+            }
+            
+        });
+        
+        BorderPane pane = new BorderPane();
+        pane.setCenter(listview);
+        pane.setBottom(bOK);
+        
+        bOK.setOnAction((e)->{
+
+            obvList.remove(0, obvList.size()); //removes all the previous results from the search
+            btnSearch.setDisable(false); //enables search button when they press ok
+            stage.close();
+        });
+        
+        Scene scene = new Scene(pane, 500, 500);
+        stage.setScene(scene);
+        stage.setTitle("Search results");
+        stage.show();
+
+    }
+    /**
+     * check the obv list 
+     * @param obvList 
+     */
+    private void checkObvList(ObservableList<String> obvList) {
+        if(!obvList.isEmpty()) { //if it contains some matches
+            searchStage(); //show the list view
+        }
+        else {
+            showStage("No match"); //prompt a message saying no matches
+        }
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+}
+/**
+ *
+ * Programmer: Christopher Luong, Gurkamal Hans<BR>
+ * Program: Validations.java<BR>
+ * Date: April 2016<BR>
+ * @version 2.0 
+ */
+
+package final_project_2.pkg0;
+
+import java.util.ArrayList;
+import javafx.scene.control.ComboBox;
+
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+
+
+
+public class Validations {
+    /**
+     * check to see if the character list is empty
+     * @param characterArray
+     * @param textFieldArrayList
+     * @return
+     * @throws Exception if chararacter array list is empty
+     */
+    public boolean checkEmpty(ArrayList<Characters> characterArray, ArrayList<TextField> textFieldArrayList) throws Exception {
+        boolean emptyFlag = false;
+        if(characterArray.isEmpty()) { //if it is empty
+            emptyFlag = true;
+            for(int sub = 0; sub<textFieldArrayList.size(); sub++) { //loop through the textfield and set all to null for visual aethetic
+                textFieldArrayList.get(sub).setText(null);
+            }
+            throw new Exception("There are no characters in the database!");
+        }
+        return emptyFlag;
+    }
+    /**
+     * validations before you can remove a character
+     * @param textFieldArrayList
+     * @param characterArray
+     * @param index
+     * @param labelArray
+     * @param classDD
+     * @param typeDD
+     * @return
+     * @throws Exception 
+     */
+    public boolean validateRemove(ArrayList<TextField> textFieldArrayList, ArrayList<Characters> characterArray, int index, ArrayList<Label> labelArray, ComboBox<String> classDD, ComboBox<String> typeDD) throws Exception{
+        boolean removeFlag = false;
+        if(characterArray.isEmpty()) { //if you press remove and the character array list is empty throw exception
+            throw new Exception("All characters have been removed, please add one before trying to remove!");
+        }
+        if(!idCheck(textFieldArrayList,labelArray)) {
+            //if it is not a number or blank throw exception, see method
+        }
+        if(Integer.parseInt(textFieldArrayList.get(0).getText()) != characterArray.get(index).getId()) { //if not matching
+            labelArray.get(0).setText("ID does not match"); //set label
+            throw new Exception("ID does not match"); //throw exception
+        }
+        if(!nameCheck(textFieldArrayList,labelArray)) { 
+            //if name is empty it will throw exception, see methos
+        }
+        if (!textFieldArrayList.get(1).getText().equalsIgnoreCase(characterArray.get(index).getName())) { //if the name is not the exact you cant remove
+                throw new Exception("Name does not match");
+        }
+        
+        if(!classDD.getValue().matches(characterArray.get(index).getcClass())) { //if the class dropdown and the data on character array list dont match
+            throw new Exception("Class does not match");
+        }
+        if(!typeDD.getValue().matches(characterArray.get(index).getType())) { //if the type dropdown and the data on the character array list dont match
+            throw new Exception("Type does not match");
+        }
+        if(!comboCheck(textFieldArrayList, labelArray)) {
+            //if combo isnt a number or empty, throw exceptions, see method
+        }
+        if(Integer.parseInt(textFieldArrayList.get(2).getText()) != characterArray.get(index).getCombo()) { //if combo doesnt match
+                throw new Exception("Combo does not match");
+        }
+        if(!hpCheck(textFieldArrayList,labelArray)) {
+            //if hp is empty or not a number, throw exceptions, see method
+        }
+        if(Integer.parseInt(textFieldArrayList.get(3).getText()) != characterArray.get(index).getHP()) { //if hp doesnt match
+                throw new Exception("HP does not match");
+        }
+        if(!attackCheck(textFieldArrayList,labelArray)) {
+            //if attack is not a number or empty, throw exception, see method
+        }
+        if(Integer.parseInt(textFieldArrayList.get(4).getText()) != characterArray.get(index).getAttack()) {//if attack doesnt match
+            throw new Exception("Attack does not match"); 
+        }
+        if(!rcvCheck(textFieldArrayList,labelArray)) {
+            //if rcv is not a number or empty, throw exception, see method
+        }
+        if(Integer.parseInt(textFieldArrayList.get(5).getText()) != characterArray.get(index).getRCV()) { //if rcv doesnt match
+            throw new Exception("RCV does not match");
+        }
+        else { //if all validations pass
+            for(int i=0; i<labelArray.size();i++) { //if all validations pass then remove all error messages
+                labelArray.get(i).setText("");
+            }
+            removeFlag = true;
+                        
+        }
+        return removeFlag;
+        
+    }
+    /**
+     * check to see if you can add a character
+     * @param textFieldArrayList
+     * @param characterArray
+     * @param labelArray
+     * @param index
+     * @return
+     * @throws Exception 
+     */
+    public boolean validateAdd(ArrayList<TextField> textFieldArrayList, ArrayList<Characters> characterArray, ArrayList<Label> labelArray,int index) throws Exception {
+        boolean addFlag = false;
+        if(isEmpty(textFieldArrayList)) { //if textfields are empty
+            throw new Exception("Not everything is filled! Please fill in all text field then try again.");
+        }
+        if(!idCheck(textFieldArrayList,labelArray)) { //if empty or not a number, see method
+            throw new Exception("Please enter an ID");
+        }
+        if(!nameCheck(textFieldArrayList,labelArray)) { //if empty
+            throw new Exception("Please enter a name");
+        }
+        //no need to check class or type since something is always selected
+        if(!comboCheck(textFieldArrayList,labelArray)) { //if empty or not a number, see method
+            throw new Exception("Please enter a Combo");
+        }
+        if(!hpCheck(textFieldArrayList,labelArray)) { //if empty or not a number ,see method
+            throw new Exception("Please enter Hp");
+        }
+        if(!attackCheck(textFieldArrayList,labelArray)) { //if empty or not a number ,see method
+            throw new Exception("Please enter Attack");
+        }
+        if(!rcvCheck(textFieldArrayList,labelArray)) { //if empty or not a number ,see method
+            throw new Exception("Please enter Recovery");
+        }
+        else { //if all validations go through            
+            if(characterArray.isEmpty()) { //if it is empty we need to let it go through since it will not match with any existing ID
+                addFlag = true;
+            }
+            else {
+                for(int i=0;i<characterArray.size();i++) { //check each character in the array list and see if it already exists
+                    if(characterArray.get(i).getId() == Integer.parseInt(textFieldArrayList.get(0).getText())) { //if matching id
+                       labelArray.get(0).setText("ID already exists");
+                       throw new Exception("ID already Exists");
+                    }
+                    else { //if it doesn't then return true
+                        addFlag = true;
+                    }
+                }
+            }
+        }
+        return addFlag;
+    }
+    /**
+     * validations to see if you can modify
+     * @param textFieldArrayList
+     * @param characterArray
+     * @param labelArray
+     * @param index
+     * @return
+     * @throws Exception 
+     */
+    public boolean validateModify(ArrayList<TextField> textFieldArrayList, ArrayList<Characters> characterArray, ArrayList<Label> labelArray,int index) throws Exception {
+        boolean modifyFlag = false;
+        
+        if(characterArray.size() == 0) { //when array list is empty
+            throw new Exception("You cannot modify when there are no characters in the database! Please make a character first.");
+        }
+        if(!idCheck(textFieldArrayList,labelArray)) { //if empty or not a number
+            throw new Exception("Please enter an ID");
+        }
+        if(!nameCheck(textFieldArrayList,labelArray)) {//if empty
+            throw new Exception("Please enter a name");
+        }
+        //no need to check for class and type since something is always selected
+        if(!comboCheck(textFieldArrayList,labelArray)) { //if empty or not a number
+            throw new Exception("Please enter a Combo");
+        }
+        if(!hpCheck(textFieldArrayList,labelArray)) {//if empty or not a number
+            throw new Exception("Please enter Hp");
+        }
+        if(!attackCheck(textFieldArrayList,labelArray)) {//if empty or not a number
+            throw new Exception("Please enter Attack");
+        }
+        if(!rcvCheck(textFieldArrayList,labelArray)) {//if empty or not a number
+            throw new Exception("Please enter Recovery");
+        }
+        else { //if all validations go through                        
+                for(int i=0;i<characterArray.size();i++) { //check each character in the array list and see if it already exists
+                    if(i == index) {//if we are on the same index then we can ignore the id checker
+                        modifyFlag = true;
+                    }
+                    else if(characterArray.get(i).getId() == Integer.parseInt(textFieldArrayList.get(0).getText())) { //if matching ids
+                       labelArray.get(0).setText("ID already exists"); //show error message
+                       throw new Exception("ID already Exists");
+                    }
+                    else { //if it doesn't match then return true
+                        modifyFlag = true;
+                    }
+                }
+
+        }
+        
+        return modifyFlag;
+    }
+    /**
+     * method to see if string is an int
+     * @param s
+     * @return 
+     */
+    private boolean isInt(String s){
+        for(int i = 0; i < s.length(); i++){
+            if(!Character.isDigit(s.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * checking if a textfield is empty
+     * @param textFieldArrayList
+     * @return 
+     */
+    private boolean isEmpty(ArrayList<TextField> textFieldArrayList)  {
+        if(textFieldArrayList.get(0).getText() == null ||
+            textFieldArrayList.get(1).getText() == null ||
+            textFieldArrayList.get(2).getText() == null ||
+            textFieldArrayList.get(3).getText() == null ||
+            textFieldArrayList.get(4).getText() == null ||
+            textFieldArrayList.get(5).getText() == null
+            ) {
+                return true;
+                
+            }
+
+        return false;
+    }
+    /**
+     * checking id for empty or not a number
+     * @param textFieldArrayList
+     * @param labelArray
+     * @return
+     * @throws Exception 
+     */
+    private boolean idCheck(ArrayList<TextField> textFieldArrayList, ArrayList<Label> labelArray) throws Exception{
+        if(textFieldArrayList.get(0).getText().isEmpty() || textFieldArrayList.get(0).getText() == null) { //if id textfield is empty
+            labelArray.get(0).setText("Please enter an ID");
+            return false; //did not pass idcheck
+            
+        }
+        if (!isInt(textFieldArrayList.get(0).getText())) { //if id textfield is not a number
+            labelArray.get(0).setText("Please Enter a number");
+            throw new Exception("Please enter a number");
+        }
+        return true;
+    }
+    /**
+     * checking name to see if empty
+     * @param textFieldArrayList
+     * @param labelArray
+     * @return 
+     */
+    private boolean nameCheck(ArrayList<TextField> textFieldArrayList, ArrayList<Label> labelArray)  {
+        if(textFieldArrayList.get(1).getText().isEmpty() || textFieldArrayList.get(1).getText() == null) { //if name textfield is empty
+            labelArray.get(1).setText("Please enter a Name");
+            return false;
+            
+        }
+        return true;
+    }
+    /**
+     * checking to see if combo is not a number or empty
+     * @param textFieldArrayList
+     * @param labelArray
+     * @return
+     * @throws Exception 
+     */
+    private boolean comboCheck(ArrayList<TextField> textFieldArrayList, ArrayList<Label> labelArray) throws Exception {
+        if(textFieldArrayList.get(2).getText().isEmpty() || textFieldArrayList.get(2).getText() == null) { //if combo textfield is empty
+            labelArray.get(4).setText("Please enter a Combo");
+            return false;
+            
+        }
+        if (!isInt(textFieldArrayList.get(2).getText())) { //if combo textfield is not an integer
+            labelArray.get(4).setText("Please Enter a number");
+            throw new Exception("Please enter a number");
+        }
+        return true;
+    }
+    /**
+     * checking to see if hp is empty or not a number
+     * @param textFieldArrayList
+     * @param labelArray
+     * @return
+     * @throws Exception 
+     */
+    private boolean hpCheck(ArrayList<TextField> textFieldArrayList, ArrayList<Label> labelArray) throws Exception  {
+        if(textFieldArrayList.get(3).getText().isEmpty() || textFieldArrayList.get(3).getText() == null) { //if hp textfield is empty
+            labelArray.get(5).setText("Please enter Hp");
+            return false;
+            
+        }
+        if (!isInt(textFieldArrayList.get(3).getText())) { //if hp is not an integer
+            labelArray.get(5).setText("Please Enter a number");
+            throw new Exception("Please enter a number");
+        }
+        
+        return true;
+    }
+    /**
+     * checking to see if attack is empty or not a number
+     * @param textFieldArrayList
+     * @param labelArray
+     * @return
+     * @throws Exception 
+     */
+    private boolean attackCheck(ArrayList<TextField> textFieldArrayList, ArrayList<Label> labelArray) throws Exception {
+        if(textFieldArrayList.get(4).getText().isEmpty() || textFieldArrayList.get(4).getText() == null) { //if attack textfield is empty
+            labelArray.get(6).setText("Please enter Attack");
+            
+            return false;
+            
+        }
+        if (!isInt(textFieldArrayList.get(4).getText())) { //if attack is not an integer
+            labelArray.get(6).setText("Please Enter a number");
+            throw new Exception("Please enter a number");
+            
+        }
+        return true;
+    }
+    /**
+     * checking to see if rcv is empty or not a number
+     * @param textFieldArrayList
+     * @param labelArray
+     * @return
+     * @throws Exception 
+     */
+    private boolean rcvCheck(ArrayList<TextField> textFieldArrayList, ArrayList<Label> labelArray) throws Exception  {
+        if(textFieldArrayList.get(5).getText().isEmpty() || textFieldArrayList.get(5).getText() == null) { //if rcv textfield is empty
+            labelArray.get(7).setText("Please enter Recovery");
+            return false;
+            
+        }
+        if (!isInt(textFieldArrayList.get(5).getText())) { //if rcv is not a number
+            labelArray.get(7).setText("Please Enter a number");
+            throw new Exception("Please enter a number");
+        }
+        return true;
+    }
+    
+    
+}
